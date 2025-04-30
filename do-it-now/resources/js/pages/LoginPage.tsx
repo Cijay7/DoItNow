@@ -3,6 +3,7 @@ import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { AuthContextType, useAuth } from '../contexts/AuthContext';
+import { AuthError } from './RegisterPage';
 
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
@@ -24,7 +25,8 @@ const LoginPage: React.FC = () => {
             await login(email, password);
             navigate('/todo-list');
         } catch (error: unknown) {
-            setError((error as Error)?.message || 'Terjadi kesalahan saat login. Silakan coba lagi.');
+            const authError = error as AuthError;
+            setError(authError.response?.data?.message || 'Terjadi kesalahan saat login. Silakan coba lagi.');
             console.log(error);
         } finally {
             setIsLoading(false);

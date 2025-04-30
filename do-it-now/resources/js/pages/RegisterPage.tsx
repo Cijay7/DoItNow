@@ -3,7 +3,7 @@ import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-interface AuthError {
+export interface AuthError {
     response?: {
         data?: {
             message?: string;
@@ -17,7 +17,7 @@ export default function RegisterPage(): React.JSX.Element {
     const { register } = useAuth();
 
     const [email, setEmail] = useState<string>('');
-    const [name, setName] = useState<string>('');
+    const [nama, setNama] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -30,7 +30,7 @@ export default function RegisterPage(): React.JSX.Element {
         setError('');
 
         try {
-            await register(email, password, passwordConfirmation, name);
+            await register(email, password, passwordConfirmation, nama);
             navigate('/todo-list');
         } catch (error) {
             const authError = error as AuthError;
@@ -61,8 +61,8 @@ export default function RegisterPage(): React.JSX.Element {
                             required
                             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
                             placeholder="Masukkan nama lengkap"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={nama}
+                            onChange={(e) => setNama(e.target.value)}
                         />
                     </div>
 

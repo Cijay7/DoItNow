@@ -3,11 +3,11 @@ import { createContext, ReactNode, useContext } from 'react';
 
 import api from '../lib/axios';
 
-interface Todo {
+export interface Todo {
     id: string;
     judul: string;
     deskripsi: string;
-    tenggat: string;
+    waktu_tenggat: string | null;
     prioritas: 'Tinggi' | 'Sedang' | 'Rendah';
     selesai: boolean;
     created_at: string;

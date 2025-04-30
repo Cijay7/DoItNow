@@ -25,7 +25,7 @@ class TodoController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'waktu_tenggat' => 'required|date',
+            'waktu_tenggat' => 'nullable|date',
             'prioritas' => 'required|in:Rendah,Sedang,Tinggi',
         ]);
 
@@ -48,7 +48,7 @@ class TodoController extends Controller
         $validated = $request->validate([
             'judul' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'waktu_tenggat' => 'required|date',
+            'waktu_tenggat' => 'nullable|date',
             'prioritas' => 'required|in:Rendah,Sedang,Tinggi',
             'selesai' => 'boolean',
         ]);

@@ -11,7 +11,7 @@ const ProfilePage: React.FC = () => {
 
     const { user, logout } = useAuth();
 
-    const [name, setName] = useState<string>(user?.name || '');
+    const [nama, setNama] = useState<string>(user?.nama || '');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
@@ -20,7 +20,7 @@ const ProfilePage: React.FC = () => {
         setError('');
 
         try {
-            await api.put('/user/profile', { name });
+            await api.put('/user/profile', { nama });
             // Update the user context or refetch user data
             // You might need to add this functionality to your AuthContext
         } catch (error: unknown) {
@@ -45,7 +45,7 @@ const ProfilePage: React.FC = () => {
             <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
                 <div className="text-center">
                     <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-teal-600 text-2xl text-white">
-                        {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                        {user?.nama?.charAt(0)?.toUpperCase() || 'U'}
                     </div>
                     <h1 className="mt-4 text-2xl font-bold text-teal-700">Profil Pengguna</h1>
                     <p className="text-gray-600">Kelola informasi profil Anda</p>
@@ -62,8 +62,8 @@ const ProfilePage: React.FC = () => {
                             id="name"
                             type="text"
                             className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
-                            value={name}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
+                            value={nama}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNama(e.target.value)}
                         />
                     </div>
 

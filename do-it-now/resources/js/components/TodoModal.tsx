@@ -1,15 +1,7 @@
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-import { useTodo } from '@/contexts/TodoContext';
-
-interface Todo {
-    id: string;
-    judul: string;
-    deskripsi: string;
-    tenggat: string;
-    prioritas: PrioritasType;
-}
+import { Todo, useTodo } from '@/contexts/TodoContext';
 
 type PrioritasType = 'Rendah' | 'Sedang' | 'Tinggi';
 
@@ -25,17 +17,24 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
     const [judul, setJudul] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
     const [tenggat, setTenggat] = useState('');
-    const [tenggatTime, setTenggatTime] = useState('12:00');
+    const [tenggatTime, setTenggatTime] = useState('');
     const [prioritas, setPrioritas] = useState<PrioritasType>('Sedang');
     const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         if (todo) {
-            const tenggatDate = new Date(todo.tenggat);
             setJudul(todo.judul);
             setDeskripsi(todo.deskripsi);
-            setTenggat(tenggatDate.toISOString().split('T')[0]);
-            setTenggatTime(`${tenggatDate.getHours().toString().padStart(2, '0')}:${tenggatDate.getMinutes().toString().padStart(2, '0')}`);
+
+            if (todo.waktu_tenggat) {
+                const tenggatDate = new Date(todo.waktu_tenggat);
+                setTenggat(tenggatDate.toISOString().split('T')[0]);
+                setTenggatTime(`${tenggatDate.getHours().toString().padStart(2, '0')}:${tenggatDate.getMinutes().toString().padStart(2, '0')}`);
+            } else {
+                setTenggat('');
+                setTenggatTime('');
+            }
+
             setPrioritas(todo.prioritas);
         } else {
             resetForm();
@@ -46,7 +45,7 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
         setJudul('');
         setDeskripsi('');
         setTenggat('');
-        setTenggatTime('12:00');
+        setTenggatTime('');
         setPrioritas('Sedang');
     };
 
@@ -55,14 +54,25 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
         setIsLoading(true);
 
         try {
-            const [hours, minutes] = tenggatTime.split(':').map(Number);
-            const tenggatDateTime = new Date(tenggat);
-            tenggatDateTime.setHours(hours, minutes);
+            let waktu_tenggat: string | null = null;
+            if (tenggat) {
+                const tenggatDateTime = new Date(tenggat);
+
+                if (tenggatTime) {
+                    const [hours, minutes] = tenggatTime.split(':').map(Number);
+                    tenggatDateTime.setHours(hours, minutes);
+                } else {
+                    // If no time is set, default to start of day
+                    tenggatDateTime.setHours(0, 0);
+                }
+
+                waktu_tenggat = tenggatDateTime.toISOString();
+            }
 
             const todoData = {
                 judul,
                 deskripsi,
-                tenggat: tenggatDateTime.toISOString(),
+                waktu_tenggat,
                 prioritas,
             };
 
@@ -120,7 +130,6 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
                                     value={tenggat}
                                     onChange={(e) => setTenggat(e.target.value)}
                                     className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
-                                    required
                                 />
                             </div>
                         </div>
@@ -134,7 +143,6 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
                                     value={tenggatTime}
                                     onChange={(e) => setTenggatTime(e.target.value)}
                                     className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
-                                    required
                                 />
                             </div>
                         </div>
@@ -157,14 +165,14 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+                            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
                         >
                             Batal
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
+                            className="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 cursor-pointer"
                         >
                             {isLoading ? 'Menyimpan...' : todo ? 'Perbarui' : 'Tambah'}
                         </button>

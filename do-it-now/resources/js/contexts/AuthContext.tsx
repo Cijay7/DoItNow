@@ -4,7 +4,7 @@ import api from '../lib/axios';
 
 interface User {
     id: string;
-    name: string;
+    nama: string;
     email: string;
 }
 
@@ -57,7 +57,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element
         setUser(response.data.user);
     };
 
-    const register = async (email: string, password: string, password_confirmation: string, name: string): Promise<void> => {
+    const register = async (email: string, password: string, password_confirmation: string, nama: string): Promise<void> => {
         interface RegisterResponse {
             token: string;
             user: User;
@@ -67,7 +67,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element
             email,
             password,
             password_confirmation,
-            name,
+            nama,
         });
 
         localStorage.setItem('token', response.data.token);

@@ -3,19 +3,9 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '@/contexts/AuthContext';
-import { useTodo } from '@/contexts/TodoContext';
+import { Todo, useTodo } from '@/contexts/TodoContext';
 
 import { TodoModal } from '@/components/TodoModal';
-
-interface Todo {
-    id: string;
-    judul: string;
-    deskripsi: string;
-    prioritas: 'Tinggi' | 'Sedang' | 'Rendah';
-    selesai: boolean;
-    tenggat: string;
-    created_at: string;
-}
 
 export default function TodoListPage() {
     const navigate = useNavigate();
@@ -110,8 +100,11 @@ export default function TodoListPage() {
                 <div className="mb-6 flex items-center justify-between">
                     <h1 className="text-3xl font-bold text-teal-700">Do It Now</h1>
                     <div className="flex items-center gap-2">
-                        <button onClick={() => navigate('/profile')} className="rounded-full bg-teal-600 p-2 text-white hover:bg-teal-700">
-                            {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+                        <button
+                            onClick={() => navigate('/profile')}
+                            className="h-10 w-10 cursor-pointer rounded-full bg-teal-600 p-2 text-white hover:bg-teal-700"
+                        >
+                            {user?.nama?.charAt(0)?.toUpperCase() || 'U'}
                         </button>
                     </div>
                 </div>
@@ -122,7 +115,7 @@ export default function TodoListPage() {
                             onClick={() => setFilter('semua')}
                             className={`rounded-md px-4 py-2 ${
                                 filter === 'semua' ? 'bg-teal-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-                            }`}
+                            } cursor-pointer`}
                         >
                             Semua
                         </button>
@@ -130,7 +123,7 @@ export default function TodoListPage() {
                             onClick={() => setFilter('aktif')}
                             className={`rounded-md px-4 py-2 ${
                                 filter === 'aktif' ? 'bg-teal-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-                            }`}
+                            } cursor-pointer`}
                         >
                             Aktif
                         </button>
@@ -138,12 +131,12 @@ export default function TodoListPage() {
                             onClick={() => setFilter('selesai')}
                             className={`rounded-md px-4 py-2 ${
                                 filter === 'selesai' ? 'bg-teal-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-50'
-                            }`}
+                            } cursor-pointer`}
                         >
                             Selesai
                         </button>
                     </div>
-                    <button onClick={handleAddTodo} className="rounded-md bg-teal-600 px-4 py-2 text-white hover:bg-teal-700">
+                    <button onClick={handleAddTodo} className="cursor-pointer rounded-md bg-teal-600 px-4 py-2 text-white hover:bg-teal-700">
                         <Plus className="mr-2 inline h-4 w-4" /> Tambah Tugas
                     </button>
                 </div>
@@ -169,7 +162,7 @@ export default function TodoListPage() {
                                 key={todo.id}
                                 className={`cursor-pointer rounded-lg bg-white p-6 shadow-lg transition-all hover:shadow-xl ${
                                     todo.selesai ? 'border-l-4 border-green-500' : ''
-                                } ${!todo.selesai && isOverdue(todo.tenggat) ? 'border-l-4 border-red-500' : ''}`}
+                                } ${!todo.selesai && todo.waktu_tenggat && isOverdue(todo.waktu_tenggat) ? 'border-l-4 border-red-500' : ''}`}
                                 onClick={() => handleOpenTodo(todo)}
                             >
                                 <div className="mb-4 flex items-start justify-between">
@@ -180,10 +173,12 @@ export default function TodoListPage() {
                                 <p className={`mb-4 text-sm ${todo.selesai ? 'text-gray-500 line-through' : 'text-gray-600'}`}>{todo.deskripsi}</p>
 
                                 <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500">
-                                    <div className="flex items-center">
-                                        <Clock className="mr-1 h-4 w-4" />
-                                        <span>Tenggat: {formatDate(todo.tenggat)}</span>
-                                    </div>
+                                    {todo.waktu_tenggat && (
+                                        <div className="flex items-center">
+                                            <Clock className="mr-1 h-4 w-4" />
+                                            <span>Tenggat: {formatDate(todo.waktu_tenggat)}</span>
+                                        </div>
+                                    )}
                                     <div className="flex items-center">
                                         <Calendar className="mr-1 h-4 w-4" />
                                         <span>Dibuat: {formatDate(todo.created_at)}</span>
