@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from 'lucide-react';
 import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { AuthContextType, useAuth } from '../contexts/AuthContext';
 import { AuthError } from './RegisterPage';
@@ -23,7 +24,12 @@ const LoginPage: React.FC = () => {
 
         try {
             await login(email, password);
-            navigate('/todo-list');
+            toast.success('Login Berhasil', {
+                description: 'Selamat datang kembali!',
+            });
+            setTimeout(() => {
+                navigate('/todo-list');
+            }, 4000);
         } catch (error: unknown) {
             const authError = error as AuthError;
             setError(authError.response?.data?.message || 'Terjadi kesalahan saat login. Silakan coba lagi.');

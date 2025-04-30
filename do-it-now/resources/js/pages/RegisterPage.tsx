@@ -1,6 +1,8 @@
 import { Eye, EyeOff } from 'lucide-react';
 import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
+
 import { useAuth } from '../contexts/AuthContext';
 
 export interface AuthError {
@@ -31,7 +33,12 @@ export default function RegisterPage(): React.JSX.Element {
 
         try {
             await register(email, password, passwordConfirmation, nama);
-            navigate('/todo-list');
+            toast.success('Pendaftaran Berhasil', {
+                description: 'Akun Anda telah berhasil dibuat!',
+            });
+            setTimeout(() => {
+                navigate('/todo-list');
+            }, 4000);
         } catch (error) {
             const authError = error as AuthError;
             setError(authError.response?.data?.message || 'Terjadi kesalahan saat mendaftar. Silakan coba lagi.');

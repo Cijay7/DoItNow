@@ -1,5 +1,6 @@
 import { Calendar as CalendarIcon, Clock } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { Todo, useTodo } from '@/contexts/TodoContext';
 
@@ -78,8 +79,14 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
 
             if (todo) {
                 await updateTodo({ id: todo.id, ...todoData });
+                toast('Tugas Diperbarui', {
+                    description: `${todo.judul} telah diperbarui`,
+                });
             } else {
                 await addTodo(todoData);
+                toast('Tugas Ditambahkan', {
+                    description: `${todoData.judul} telah ditambahkan`,
+                });
             }
 
             onClose();
@@ -165,14 +172,14 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
                         <button
                             type="button"
                             onClick={onClose}
-                            className="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 cursor-pointer"
+                            className="cursor-pointer rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                         >
                             Batal
                         </button>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700 cursor-pointer"
+                            className="cursor-pointer rounded-md bg-teal-600 px-4 py-2 text-sm font-medium text-white hover:bg-teal-700"
                         >
                             {isLoading ? 'Menyimpan...' : todo ? 'Perbarui' : 'Tambah'}
                         </button>

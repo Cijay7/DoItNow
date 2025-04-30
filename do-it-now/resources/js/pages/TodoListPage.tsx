@@ -1,6 +1,7 @@
 import { Calendar, CheckCircle, Clock, Plus, Trash } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/contexts/AuthContext';
 import { Todo, useTodo } from '@/contexts/TodoContext';
@@ -16,6 +17,39 @@ export default function TodoListPage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedTodo, setSelectedTodo] = useState<Todo | null>(null);
     const [filter, setFilter] = useState<'semua' | 'aktif' | 'selesai'>('semua');
+
+    useEffect(() => {
+        const checkOverdueTasks = () => {
+            const now = new Date();
+            if (todos && todos.length > 0) {
+                todos.forEach((todo) => {
+                    if (!todo.selesai && todo.waktu_tenggat && new Date(todo.waktu_tenggat) < now) {
+                        toast('Tugas Tenggat!', {
+                            description: `${todo.judul}" telah melewati batas waktu`,
+                            className: 'bg-red-500 text-white',
+                        });
+
+                        if (Notification.permission === 'granted') {
+                            new Notification('Do It Now - Tugas Tenggat!', {
+                                body: `"${todo.judul}" telah melewati batas waktu`,
+                                icon: '/do-it-now-icon.png?height=64&width=64',
+                            });
+                        }
+                    }
+                });
+            }
+        };
+
+        if (Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+            Notification.requestPermission();
+        }
+
+        checkOverdueTasks();
+
+        // Set interval untuk cek setiap menit
+        const interval = setInterval(checkOverdueTasks, 60000);
+        return () => clearInterval(interval);
+    }, [todos]);
 
     const handleOpenTodo = (todo: Todo) => {
         setSelectedTodo(todo);

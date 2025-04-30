@@ -1,6 +1,7 @@
 import { LogOut, Save } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 import { useAuth } from '../contexts/AuthContext';
 
@@ -23,6 +24,9 @@ const ProfilePage: React.FC = () => {
             await api.put('/user/profile', { nama });
             // Update the user context or refetch user data
             // You might need to add this functionality to your AuthContext
+            toast('Profil Diperbarui', {
+                description: 'Informasi profil Anda telah berhasil diperbarui',
+            });
         } catch (error: unknown) {
             setError((error as Error).message || 'Terjadi kesalahan saat memperbarui profil.');
         } finally {
@@ -33,7 +37,12 @@ const ProfilePage: React.FC = () => {
     const handleLogout = async (): Promise<void> => {
         try {
             await logout();
-            navigate('/login');
+            toast('Logout Berhasil', {
+                description: 'Anda telah keluar dari akun',
+            });
+            setTimeout(() => {
+                navigate('/login');
+            }, 1000);
         } catch (error: unknown) {
             setError('Terjadi kesalahan saat logout.');
             console.log(error);
