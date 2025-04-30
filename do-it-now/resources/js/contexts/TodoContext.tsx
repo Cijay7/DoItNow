@@ -16,9 +16,11 @@ export interface Todo {
 interface TodoContextType {
     todos: Todo[] | undefined;
     isLoading: boolean;
+    isRefetching: boolean;
     addTodo: (newTodo: Omit<Todo, 'id' | 'selesai' | 'created_at'>) => Promise<Todo>;
     updateTodo: (todo: Partial<Todo> & { id: string }) => Promise<Todo>;
     deleteTodo: (id: string) => Promise<void>;
+    refreshTodos: () => Promise<void>;
 }
 
 interface TodoProviderProps {
@@ -31,13 +33,23 @@ export function TodoProvider({ children }: TodoProviderProps) {
     const queryClient = useQueryClient();
 
     // Fetch todos
-    const { data: todos, isLoading } = useQuery({
+    const {
+        data: todos,
+        isLoading,
+        isRefetching,
+        refetch,
+    } = useQuery({
         queryKey: ['todos'] as const,
         queryFn: async () => {
             const response = await api.get<Todo[]>('/todos');
             return response.data;
         },
     });
+
+    // Refresh todos function
+    const refreshTodos = async (): Promise<void> => {
+        await refetch();
+    };
 
     // Add todo
     const addTodoMutation = useMutation({
@@ -76,9 +88,11 @@ export function TodoProvider({ children }: TodoProviderProps) {
             value={{
                 todos,
                 isLoading,
+                isRefetching,
                 addTodo: addTodoMutation.mutateAsync,
                 updateTodo: updateTodoMutation.mutateAsync,
                 deleteTodo: deleteTodoMutation.mutateAsync,
+                refreshTodos,
             }}
         >
             {children}

@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
-
 import api from '../lib/axios';
 
 interface User {
@@ -14,6 +13,7 @@ export interface AuthContextType {
     login: (email: string, password: string) => Promise<void>;
     register: (email: string, password: string, password_confirmation: string, name: string) => Promise<void>;
     logout: () => Promise<void>;
+    refreshUser: () => Promise<void>;
 }
 
 interface AuthProviderProps {
@@ -41,6 +41,22 @@ export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element
             console.log(error);
             localStorage.removeItem('token');
             setUser(null);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const refreshUser = async (): Promise<void> => {
+        try {
+            setLoading(true);
+            const token = localStorage.getItem('token');
+            if (token) {
+                const response = await api.get<User>('/user');
+                setUser(response.data);
+            }
+        } catch (error: unknown) {
+            console.log('Error refreshing user data:', error);
+            // Don't remove token on refresh error to prevent unexpected logouts
         } finally {
             setLoading(false);
         }
@@ -86,6 +102,7 @@ export function AuthProvider({ children }: AuthProviderProps): React.JSX.Element
         login,
         register,
         logout,
+        refreshUser,
     };
 
     return <AuthContext.Provider value={contextValue}>{children}</AuthContext.Provider>;

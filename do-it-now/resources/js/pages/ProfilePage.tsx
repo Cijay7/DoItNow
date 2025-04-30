@@ -10,7 +10,7 @@ import api from '../lib/axios';
 const ProfilePage: React.FC = () => {
     const navigate = useNavigate();
 
-    const { user, logout } = useAuth();
+    const { user, logout, refreshUser } = useAuth();
 
     const [nama, setNama] = useState<string>(user?.nama || '');
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -23,7 +23,7 @@ const ProfilePage: React.FC = () => {
         try {
             await api.put('/user/profile', { nama });
             // Update the user context or refetch user data
-            // You might need to add this functionality to your AuthContext
+            refreshUser();
             toast('Profil Diperbarui', {
                 description: 'Informasi profil Anda telah berhasil diperbarui',
             });

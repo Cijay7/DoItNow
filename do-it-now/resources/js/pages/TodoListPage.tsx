@@ -11,7 +11,7 @@ import { TodoModal } from '@/components/TodoModal';
 export default function TodoListPage() {
     const navigate = useNavigate();
 
-    const { todos, isLoading, updateTodo, deleteTodo } = useTodo();
+    const { todos, isLoading, updateTodo, deleteTodo, refreshTodos } = useTodo();
     const { user } = useAuth();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,6 +70,11 @@ export default function TodoListPage() {
                 ...todo,
                 selesai: !todo.selesai,
             });
+            toast(todo.selesai ? 'Tugas Selesai' : 'Tugas Dibuka Kembali', {
+                description: `${todo.judul} telah ${todo.selesai ? 'ditandai selesai' : 'dibuka kembali'}`,
+            });
+            // Refresh todos
+            refreshTodos();
         } catch (error) {
             console.error('Error toggling todo:', error);
         }
@@ -77,7 +82,13 @@ export default function TodoListPage() {
 
     const handleDeleteTodo = async (id: string) => {
         try {
+            const todoToDelete = todos && todos.find((todo) => todo.id === id);
             await deleteTodo(id);
+            toast('Tugas Dihapus', {
+                description: `"${todoToDelete?.judul}" telah dihapus`,
+            });
+            // Refresh todos
+            refreshTodos();
         } catch (error) {
             console.error('Error deleting todo:', error);
         }
