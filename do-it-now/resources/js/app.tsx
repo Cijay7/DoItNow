@@ -1,24 +1,61 @@
-import '../css/app.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import { Toaster } from './components/ui/sonner';
 
-import { createInertiaApp } from '@inertiajs/react';
-import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { createRoot } from 'react-dom/client';
-import { initializeTheme } from './hooks/use-appearance';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { TodoProvider } from './contexts/TodoContext';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+import LoginPage from './pages/LoginPage';
+import ProfilePage from './pages/ProfilePage';
+import RegisterPage from './pages/RegisterPage';
+import TodoListPage from './pages/TodoListPage';
 
-createInertiaApp({
-    title: (title) => `${title} - ${appName}`,
-    resolve: (name) => resolvePageComponent(`./pages/${name}.tsx`, import.meta.glob('./pages/**/*.tsx')),
-    setup({ el, App, props }) {
-        const root = createRoot(el);
+const queryClient = new QueryClient();
 
-        root.render(<App {...props} />);
-    },
-    progress: {
-        color: '#4B5563',
-    },
-});
+interface PrivateRouteProps {
+    children: React.ReactNode;
+}
 
-// This will set light / dark mode on load...
-initializeTheme();
+function PrivateRoute({ children }: PrivateRouteProps): React.JSX.Element {
+    const { user, loading } = useAuth();
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
+
+    return user ? <>{children}</> : <Navigate to="/login" />;
+}
+
+export default function App(): React.JSX.Element {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <TodoProvider>
+                    <Routes>
+                        <Route path="/login" element={<LoginPage />} />
+                        <Route path="/register" element={<RegisterPage />} />
+                        <Route
+                            path="/todo-list"
+                            element={
+                                <PrivateRoute>
+                                    <TodoListPage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route
+                            path="/profile"
+                            element={
+                                <PrivateRoute>
+                                    <ProfilePage />
+                                </PrivateRoute>
+                            }
+                        />
+                        <Route path="/" element={<Navigate to="/login" />} />
+                    </Routes>
+                    <Toaster />
+                </TodoProvider>
+            </AuthProvider>
+        </QueryClientProvider>
+    );
+}
