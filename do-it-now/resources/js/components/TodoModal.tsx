@@ -13,7 +13,7 @@ interface TodoModalProps {
 }
 
 export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
-    const { addTodo, updateTodo } = useTodo();
+    const { addTodo, updateTodo, refreshTodos } = useTodo();
 
     const [judul, setJudul] = useState('');
     const [deskripsi, setDeskripsi] = useState('');
@@ -79,11 +79,13 @@ export function TodoModal({ isOpen, onClose, todo }: TodoModalProps) {
 
             if (todo) {
                 await updateTodo({ id: todo.id, ...todoData });
+                refreshTodos();
                 toast('Tugas Diperbarui', {
                     description: `${todo.judul} telah diperbarui`,
                 });
             } else {
                 await addTodo(todoData);
+                refreshTodos();
                 toast('Tugas Ditambahkan', {
                     description: `${todoData.judul} telah ditambahkan`,
                 });
