@@ -6,6 +6,7 @@ import { Toaster } from './components/ui/sonner';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { TodoProvider } from './contexts/TodoContext';
 
+import EnhancedLoadingAnimation from './components/loading-animation';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
@@ -20,9 +21,7 @@ interface PrivateRouteProps {
 function PrivateRoute({ children }: PrivateRouteProps): React.JSX.Element {
     const { user, loading } = useAuth();
 
-    if (loading) {
-        return <div>Loading...</div>;
-    }
+    if (loading) return <EnhancedLoadingAnimation fullScreen={true} message="Memeriksa autentikasi" />;
 
     return user ? <>{children}</> : <Navigate to="/login" />;
 }

@@ -1,5 +1,5 @@
 import { LogOut, Save } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 
@@ -16,12 +16,18 @@ const ProfilePage: React.FC = () => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
+    useEffect(() => {
+        if (user?.nama) {
+            setNama(user.nama);
+        }
+    }, [user]);
+
     const handleUpdateProfile = async (): Promise<void> => {
         setIsLoading(true);
         setError('');
 
         try {
-            await api.put('/user/profile', { nama });
+            await api.put('/user', { nama });
             // Update the user context or refetch user data
             refreshUser();
             toast('Profil Diperbarui', {

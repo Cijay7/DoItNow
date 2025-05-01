@@ -65,4 +65,26 @@ class AuthController extends Controller
     {
         return response()->json($request->user());
     }
+
+    /**
+     * Update the authenticated user's name.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateUser(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:255',
+        ]);
+
+        $user = $request->user();
+        $user->nama = $validated['nama'];
+        $user->save();
+
+        return response()->json([
+            'message' => 'User name updated successfully',
+            'user' => $user
+        ]);
+    }
 }
