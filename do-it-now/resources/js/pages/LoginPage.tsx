@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Eye, EyeOff } from 'lucide-react';
 import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -24,9 +25,20 @@ const LoginPage: React.FC = () => {
 
         try {
             await login(email, password);
-            toast.success('Login Berhasil', {
-                description: 'Selamat datang kembali!',
-            });
+            toast.custom((_t) => (
+                <div
+                    style={{
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        padding: '15px',
+                        borderRadius: '6px',
+                        width: '22rem',
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Login Berhasil</div>
+                    <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>Selamat datang kembali!</div>
+                </div>
+            ));
             setTimeout(() => {
                 navigate('/todo-list');
             }, 4000);
@@ -70,9 +82,6 @@ const LoginPage: React.FC = () => {
                             <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                                 Password
                             </label>
-                            <Link to="/forgot-password" className="text-sm text-teal-600 hover:text-teal-500">
-                                Lupa password?
-                            </Link>
                         </div>
                         <div className="relative mt-1">
                             <input

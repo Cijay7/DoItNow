@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Eye, EyeOff } from 'lucide-react';
 import React, { FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -23,6 +24,7 @@ export default function RegisterPage(): React.JSX.Element {
     const [password, setPassword] = useState<string>('');
     const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
     const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string>('');
 
@@ -33,9 +35,20 @@ export default function RegisterPage(): React.JSX.Element {
 
         try {
             await register(email, password, passwordConfirmation, nama);
-            toast.success('Pendaftaran Berhasil', {
-                description: 'Akun Anda telah berhasil dibuat!',
-            });
+            toast.custom((_t) => (
+                <div
+                    style={{
+                        backgroundColor: '#10b981',
+                        color: 'white',
+                        padding: '15px',
+                        borderRadius: '6px',
+                        width: '22rem',
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Pendaftaran Berhasil</div>
+                    <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>Akun Anda telah berhasil dibuat!</div>
+                </div>
+            ));
             setTimeout(() => {
                 navigate('/todo-list');
             }, 4000);
@@ -116,15 +129,24 @@ export default function RegisterPage(): React.JSX.Element {
                         <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
                             Konfirmasi Password
                         </label>
-                        <input
-                            id="password_confirmation"
-                            type={showPassword ? 'text' : 'password'}
-                            required
-                            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
-                            placeholder="••••••••"
-                            value={passwordConfirmation}
-                            onChange={(e) => setPasswordConfirmation(e.target.value)}
-                        />
+                        <div className="relative mt-1">
+                            <input
+                                id="password_confirmation"
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                required
+                                className="block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-teal-500 focus:ring-1 focus:ring-teal-500 focus:outline-none"
+                                placeholder="••••••••"
+                                value={passwordConfirmation}
+                                onChange={(e) => setPasswordConfirmation(e.target.value)}
+                            />
+                            <button
+                                type="button"
+                                className="absolute top-1/2 right-3 -translate-y-1/2"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            >
+                                {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-500" /> : <Eye className="h-4 w-4 text-gray-500" />}
+                            </button>
+                        </div>
                     </div>
 
                     <button

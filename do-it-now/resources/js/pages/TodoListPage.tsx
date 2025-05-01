@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Calendar, CheckCircle, Clock, Plus, Trash } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -7,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Todo, useTodo } from '@/contexts/TodoContext';
 
 import { TodoModal } from '@/components/TodoModal';
+import EnhancedLoadingAnimation from '@/components/loading-animation';
 
 export default function TodoListPage() {
     const navigate = useNavigate();
@@ -24,14 +26,24 @@ export default function TodoListPage() {
             if (todos && todos.length > 0) {
                 todos.forEach((todo) => {
                     if (!todo.selesai && todo.waktu_tenggat && new Date(todo.waktu_tenggat) < now) {
-                        toast('Tugas Tenggat!', {
-                            description: `${todo.judul}" telah melewati batas waktu`,
-                            className: 'bg-red-500 text-white',
-                        });
+                        toast.custom((_t) => (
+                            <div
+                                style={{
+                                    backgroundColor: '#ef4444',
+                                    color: 'white',
+                                    padding: '15px',
+                                    borderRadius: '6px',
+                                    width: '22rem',
+                                }}
+                            >
+                                <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Tugas Tenggat!</div>
+                                <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>{todo.judul} telah melewati batas waktu</div>
+                            </div>
+                        ));
 
                         if (Notification.permission === 'granted') {
                             new Notification('Do It Now - Tugas Tenggat!', {
-                                body: `"${todo.judul}" telah melewati batas waktu`,
+                                body: `${todo.judul} telah melewati batas waktu`,
                                 icon: '/do-it-now-icon.png?height=64&width=64',
                             });
                         }
@@ -70,13 +82,55 @@ export default function TodoListPage() {
                 ...todo,
                 selesai: !todo.selesai,
             });
-            toast(todo.selesai ? 'Tugas Selesai' : 'Tugas Dibuka Kembali', {
-                description: `${todo.judul} telah ${todo.selesai ? 'ditandai selesai' : 'dibuka kembali'}`,
-            });
+            if (!todo.selesai) {
+                toast.custom((_t) => (
+                    <div
+                        style={{
+                            backgroundColor: '#10b981',
+                            color: 'white',
+                            padding: '15px',
+                            borderRadius: '6px',
+                            width: '22rem',
+                        }}
+                    >
+                        <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Tugas Selesai</div>
+                        <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>{todo.judul} telah ditandai selesai</div>
+                    </div>
+                ));
+            } else {
+                toast.custom((_t) => (
+                    <div
+                        style={{
+                            backgroundColor: '#3b82f6',
+                            color: 'white',
+                            padding: '15px',
+                            borderRadius: '6px',
+                            width: '22rem',
+                        }}
+                    >
+                        <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Tugas Dibuka Kembali</div>
+                        <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>{todo.judul} telah dibuka kembali</div>
+                    </div>
+                ));
+            }
             // Refresh todos
             refreshTodos();
         } catch (error) {
             console.error('Error toggling todo:', error);
+            toast.custom((_t) => (
+                <div
+                    style={{
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        padding: '15px',
+                        borderRadius: '6px',
+                        width: '22rem',
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Gagal Memperbarui</div>
+                    <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>Terjadi kesalahan saat memperbarui tugas</div>
+                </div>
+            ));
         }
     };
 
@@ -85,12 +139,26 @@ export default function TodoListPage() {
             const todoToDelete = todos && todos.find((todo) => todo.id === id);
             await deleteTodo(id);
             toast('Tugas Dihapus', {
-                description: `"${todoToDelete?.judul}" telah dihapus`,
+                description: `${todoToDelete?.judul} telah dihapus`,
             });
             // Refresh todos
             refreshTodos();
         } catch (error) {
             console.error('Error deleting todo:', error);
+            toast.custom((_t) => (
+                <div
+                    style={{
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        padding: '15px',
+                        borderRadius: '6px',
+                        width: '22rem',
+                    }}
+                >
+                    <div style={{ fontWeight: 'bold', marginBottom: '4px', fontSize: 12 }}>Gagal Menghapus</div>
+                    <div style={{ color: 'white', opacity: 0.9, fontSize: 12 }}>Terjadi kesalahan saat menghapus tugas</div>
+                </div>
+            ));
         }
     };
 
@@ -128,16 +196,7 @@ export default function TodoListPage() {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-teal-100 to-teal-50">
-                <div className="text-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent"></div>
-                    <p className="mt-2 text-teal-600">Memuat...</p>
-                </div>
-            </div>
-        );
-    }
+    if (isLoading) return <EnhancedLoadingAnimation fullScreen={true} message="Memuat tugas" />;
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-teal-100 to-teal-50 p-4">
