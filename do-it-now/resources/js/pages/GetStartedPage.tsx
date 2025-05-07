@@ -78,7 +78,7 @@ export default function GetStartedPage(): React.JSX.Element {
         <div className="flex min-h-screen flex-col bg-gradient-to-br from-teal-100 to-teal-50">
             {/* Header */}
             <header className="flex items-center justify-between p-4">
-                <h1 className="text-2xl font-bold text-teal-700">Do It Now</h1>
+                <img src="/do-it-now-logo.png" className="w-48" />
                 <button className="cursor-pointer rounded px-4 py-2 text-teal-700 transition-colors hover:bg-teal-50" onClick={goToLogin}>
                     Lewati
                 </button>
