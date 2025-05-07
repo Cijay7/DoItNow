@@ -63,9 +63,8 @@ export default function RegisterPage(): React.JSX.Element {
     return (
         <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-teal-100 to-teal-50 p-4">
             <div className="w-full max-w-md rounded-lg bg-white p-8 shadow-lg">
-                <div className="text-center">
-                    <h1 className="text-3xl font-bold text-teal-700">Do It Now</h1>
-                    <p className="mt-2 text-gray-600">Buat akun baru untuk memulai</p>
+                <div className="w-full flex items-center justify-center">
+                    <img src="/do-it-now-logo-register.png" className="w-72" />
                 </div>
 
                 {error && <div className="mt-4 rounded-md bg-red-50 p-4 text-sm text-red-600">{error}</div>}

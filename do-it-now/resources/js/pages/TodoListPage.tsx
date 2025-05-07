@@ -202,7 +202,7 @@ export default function TodoListPage() {
         <div className="min-h-screen bg-gradient-to-br from-teal-100 to-teal-50 p-4">
             <div className="mx-auto max-w-4xl">
                 <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-3xl font-bold text-teal-700">Do It Now</h1>
+                    <img src="/do-it-now-logo.png" className="w-48" />
                     <div className="flex items-center gap-2">
                         <button
                             onClick={() => navigate('/profile')}

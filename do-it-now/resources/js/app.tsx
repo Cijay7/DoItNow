@@ -7,6 +7,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { TodoProvider } from './contexts/TodoContext';
 
 import EnhancedLoadingAnimation from './components/loading-animation';
+import GetStartedPage from './pages/GetStartedPage';
 import LoginPage from './pages/LoginPage';
 import ProfilePage from './pages/ProfilePage';
 import RegisterPage from './pages/RegisterPage';
@@ -50,7 +51,7 @@ export default function App(): React.JSX.Element {
                                 </PrivateRoute>
                             }
                         />
-                        <Route path="/" element={<Navigate to="/login" />} />
+                        <Route path="/" element={<GetStartedPage />} />
                     </Routes>
                     <Toaster />
                 </TodoProvider>
